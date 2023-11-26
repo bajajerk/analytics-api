@@ -86,7 +86,7 @@ curl -X POST \
   -H 'Content-Type: application/json' \
   -d '{
     "id": "1155ce15-0583-4cd8-9273-a8babaa897b3",
-    "text": "Alman just got fired back from OpenAI"
+    "text": "Altman just got fired back from OpenAI"
 }'
 ```
 
