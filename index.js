@@ -14,7 +14,7 @@ const app = express();
 app.use(bodyParser.json());
 
 // Set port for the API server
-const port = process.env.API_PORT || 3000;
+const port = 3005;
 
 // Initialize PostgreSQL database connection pool
 const pool = new Pool({
@@ -161,12 +161,11 @@ const processMessage = async (msg) => {
         channel.ack(msg);
     } catch (error) {
         console.error('Failed to process message:', error);
+
+        //a error queue can be created to store the error messages but for this assignment ack is used
+        channel.ack(msg);
+
         // Reject message (requeue it)
-        channel.reject(msg, true);
+        // channel.reject(msg, true);
     }
 };
-
-// Start the server
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
