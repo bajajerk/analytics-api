@@ -43,13 +43,12 @@ processing, storage, and request handling.
 ## Components
 
 1. **Node.js Runtime Environment**:
-    - The application runs on a Node.js environment to execute JavaScript code. Node.js provides the necessary runtime
-      for the application to handle incoming requests, perform data analysis, and interact with external services.
 
 2. **PostgreSQL Database**:
     - Utilized as the primary data storage system, PostgreSQL is employed to persistently store post data and analysis
-      results. It is used for assignement purpose only, in an ideal scenario, a NoSQL database would be more suitable
-      for this application(cassandra making decision to optimsie for AP(CAP)) .
+      results. 
+    - It is used for assignment purpose only, in an ideal scenario, a NoSQL database would be more suitable
+      for this application(cassandra making decision to optimise for AP(CAP)) .
 
 3. **RabbitMQ**:
     - Employed as a message broker for queuing data analysis requests. RabbitMQ allows the application to manage
@@ -58,12 +57,13 @@ processing, storage, and request handling.
 4. **NodeCache**:
     - Utilized as an in-memory caching mechanism within the Node.js environment. NodeCache aids in temporarily storing
       post analysis results, significantly reducing computation overhead and optimizing data retrieval performance.
+   - In real word scenario, we would be using distributed cache(redis, etc).
 
 ## Workflow
 
 1. **Request Handling**:
     - The Node.js application receives incoming HTTP requests through defined endpoints, triggering various actions such
-      as post creation, data analysis, and data retrieval.
+      as post creation, data analysis.
 
 2. **Data Analysis**:
     - Upon receiving a request to create a post, the application enqueues the post data to RabbitMQ for asynchronous
@@ -76,7 +76,6 @@ processing, storage, and request handling.
 4. **Caching Strategy**:
     - NodeCache is employed to cache post analysis results temporarily. This strategy significantly enhances the
       application's performance by reducing repeated computations for frequently accessed data.
-    - In real word scenario, we would be using distributed cache(redis, etc).
 
 #### cURL for Creating a Post
 
@@ -86,7 +85,7 @@ curl -X POST \
   -H 'Content-Type: application/json' \
   -d '{
     "id": "1155ce15-0583-4cd8-9273-a8babaa897b3",
-    "text": "Altman just got fired back from OpenAI"
+    "text": "Altman just got fired from OpenAI"
 }'
 ```
 
@@ -97,5 +96,20 @@ curl -X POST \
 curl --location 'http://localhost:3005/api/posts/1155ce15-0583-4cd8-9273-a8babaa897b2'
 
 ```
+
+Decisions and Assumptions
+
+1 **Async or sync analysis**:
+   - Assuming Social media posts analysis need not to be done in sync, and at a single time ton of new posts would be coming
+      so we can use async analysis for better performance and reducing load on server.
+
+2 **Soring analysis result in db itself**:
+    - Assuming in a very rare case post would be edited further changing analysis result, so we have precomputed
+      analysis result and stored in db itself.
+
+3 **Caching**:
+    - Assuming post analysis result would be frequently accessed, so we are caching it in memory
+
+
 
 
